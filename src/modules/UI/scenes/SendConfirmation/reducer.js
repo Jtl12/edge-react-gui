@@ -12,7 +12,7 @@ export const sendConfirmation = (state: SendConfirmationState = initialState, ac
   const { type, data = {} } = action
   switch (type) {
     case ACTION.UPDATE_TRANSACTION: {
-      const { transaction, transaction: { nativeAmount }, parsedUri, forceUpdateGui, error } = data
+      const { transaction, parsedUri, parsedUri: { nativeAmount }, forceUpdateGui, error } = data
       let forceUpdateGuiCounter = state.forceUpdateGuiCounter
       if (forceUpdateGui) {
         forceUpdateGuiCounter++
