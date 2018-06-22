@@ -62,7 +62,7 @@ const mapStateToProps = (state: State): SendConfirmationStateProps => {
     fiatCurrencyCode: guiWallet.fiatCurrencyCode,
     fiatPerCrypto,
     forceUpdateGuiCounter: getForceUpdateGuiCounter(state),
-    isEditable: !!sceneState.spendInfo,
+    isEditable: sceneState.isEditable,
     keyboardIsVisible: getKeyboardIsVisible(state),
     nativeAmount,
     networkFee,
