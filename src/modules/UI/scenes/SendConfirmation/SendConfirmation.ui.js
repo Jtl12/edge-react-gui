@@ -184,15 +184,17 @@ export class SendConfirmation extends Component<Props, State> {
                 </View>
               )}
 
-              <Recipient>
-                <Recipient.Row>
-                  <Recipient.Item>
-                    <Recipient.Text>
-                      <Text>{SEND_TO_DESTINATION_TEXT}</Text>
-                    </Recipient.Text>
-                  </Recipient.Item>
-                </Recipient.Row>
-              </Recipient>
+              {destination && (
+                <Recipient>
+                  <Recipient.Row>
+                    <Recipient.Item>
+                      <Recipient.Text>
+                        <Text>{SEND_TO_DESTINATION_TEXT}</Text>
+                      </Recipient.Text>
+                    </Recipient.Item>
+                  </Recipient.Row>
+                </Recipient>
+              )}
 
               {!!this.props.uniqueIdentifier && (
                 <UniqueIdentifier>

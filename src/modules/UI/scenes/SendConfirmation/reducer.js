@@ -12,7 +12,7 @@ export const sendConfirmation = (state: SendConfirmationState = initialState, ac
   const { type, data = {} } = action
   switch (type) {
     case ACTION.UPDATE_TRANSACTION: {
-      const { transaction, parsedUri, parsedUri: { nativeAmount }, forceUpdateGui, error } = data
+      const { transaction, parsedUri, forceUpdateGui, error } = data
       let forceUpdateGuiCounter = state.forceUpdateGuiCounter
       if (forceUpdateGui) {
         forceUpdateGuiCounter++
@@ -23,9 +23,11 @@ export const sendConfirmation = (state: SendConfirmationState = initialState, ac
       if (!isEqual(state.parsedUri.metadata, metadata)) {
         state.parsedUri.metadata = { ...state.parsedUri.metadata, ...metadata }
       }
-      if (customNetworkFee && state.parsedUri.customNetworkFee && !isEqual(state.parsedUri.customNetworkFee, customNetworkFee)) {
+      if (customNetworkFee && !isEqual(state.parsedUri.customNetworkFee, customNetworkFee)) {
         state.parsedUri.customNetworkFee = customNetworkFee
       }
+
+      const nativeAmount = parsedUri.nativeAmount || '0'
 
       return {
         ...state,
