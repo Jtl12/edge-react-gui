@@ -1,6 +1,7 @@
 // @flow
 
 import { isEqual } from 'lodash'
+import { add } from 'biggystring'
 
 import type { Action } from '../../../ReduxTypes.js'
 import * as ACTION from './action'
@@ -11,17 +12,18 @@ export const sendConfirmation = (state: SendConfirmationState = initialState, ac
   const { type, data = {} } = action
   switch (type) {
     case ACTION.UPDATE_TRANSACTION: {
-      const { transaction, parsedUri, forceUpdateGui, error } = data
+      const { transaction, transaction: { nativeAmount }, parsedUri, forceUpdateGui, error } = data
       let forceUpdateGuiCounter = state.forceUpdateGuiCounter
       if (forceUpdateGui) {
         forceUpdateGuiCounter++
       }
       if (!parsedUri) return { ...state, forceUpdateGuiCounter, error, transaction }
+
       const { metadata, customNetworkFee, ...others } = parsedUri
       if (!isEqual(state.parsedUri.metadata, metadata)) {
         state.parsedUri.metadata = { ...state.parsedUri.metadata, ...metadata }
       }
-      if (customNetworkFee && !isEqual(state.parsedUri.customNetworkFee, customNetworkFee)) {
+      if (customNetworkFee && state.parsedUri.customNetworkFee && !isEqual(state.parsedUri.customNetworkFee, customNetworkFee)) {
         state.parsedUri.customNetworkFee = customNetworkFee
       }
 
@@ -30,12 +32,50 @@ export const sendConfirmation = (state: SendConfirmationState = initialState, ac
         transaction,
         forceUpdateGuiCounter,
         error,
+        nativeAmount,
+        destination: parsedUri.publicAddress,
         parsedUri: {
           ...state.parsedUri,
           ...others
         }
       }
     }
+
+    case ACTION.UPDATE_PAYMENT_PROTOCOL_TRANSACTION: {
+      if (!action.data) return state
+      const { transaction } = data
+
+      return {
+        ...state,
+        transaction,
+        isEditable: false
+      }
+    }
+
+    case ACTION.MAKE_PAYMENT_PROTOCOL_TRANSACTION_FAILED: {
+      if (!action.data) return state
+      const { error } = data
+
+      return {
+        ...state,
+        error
+      }
+    }
+
+    case ACTION.NEW_SPEND_INFO: {
+      if (!action.data) return state
+      const { spendInfo, spendInfo: { spendTargets, metadata: { name: destination } } } = data
+      const nativeAmount = spendTargets.reduce((sum, { nativeAmount }) => add(sum, nativeAmount), '0')
+
+      return {
+        ...state,
+        spendInfo,
+        destination,
+        nativeAmount,
+        transaction: null
+      }
+    }
+
     case ACTION.UPDATE_IS_KEYBOARD_VISIBLE: {
       const { isKeyboardVisible } = data
       return {
@@ -43,6 +83,7 @@ export const sendConfirmation = (state: SendConfirmationState = initialState, ac
         isKeyboardVisible
       }
     }
+
     case ACTION.UPDATE_SPEND_PENDING: {
       const { pending } = data
       return {
@@ -50,9 +91,11 @@ export const sendConfirmation = (state: SendConfirmationState = initialState, ac
         pending
       }
     }
+
     case ACTION.RESET: {
       return initialState
     }
+
     default:
       return state
   }
