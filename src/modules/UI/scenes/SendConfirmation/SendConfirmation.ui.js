@@ -234,7 +234,7 @@ export class SendConfirmation extends Component<Props, State> {
 
   networkFeeSyntax = () => {
     const { networkFee, parentNetworkFee, parentDisplayDenomination } = this.props
-    if (!networkFee || !parentNetworkFee) return ''
+    if (!networkFee && !parentNetworkFee) return ''
 
     const primaryInfo: GuiCurrencyInfo = {
       displayCurrencyCode: this.props.currencyCode,

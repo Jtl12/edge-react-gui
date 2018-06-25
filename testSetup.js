@@ -1,5 +1,4 @@
-/* eslint-disable flowtype/require-valid-file-annotation */
-
+// @flow
 /* globals jest */
 
 jest.mock('mobx-react/native', () => require('mobx-react/custom'))
